@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Dataset and Metrics - BoostLR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .dataset-section {
+            background-color: #e0f7fa;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #b2ebf2;
+            margin-bottom: 20px;
+        }
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .toggle-button {
+            width: 48%;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .toggle-button:hover {
+            background-color: #0056b3;
+        }
+        .input-box {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .hidden {
+            display: none;
+        }
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Run BoostLR Algorithm</h1>
+
+        <!-- Form Wrapper -->
+        <form action="{{ url_for('input') }}" method="post" enctype="multipart/form-data">
+            <!-- Dataset Section -->
+            <div class="dataset-section">
+                
+                
+                <!-- Button Row for Dataset Selection -->
+                <button type="button" class="toggle-button" id="listButton" onclick="showDatasetList()">Choose from List</button>
+                <button type="button" class="toggle-button" id="uploadButton" onclick="showUploadOptions()">Upload Dataset</button>
+               
+
+                <!-- Dataset List Group -->
+                <div class="input-box hidden" id="datasetListBox">
+                    <label for="dataset">Select a Dataset:</label>
+                    <select name="dataset_choice" id="dataset">
+                        <option value="">Choose a Dataset</option>
+                        {% for dataset in datasets %}
+                            <option value="{{ dataset }}">{{ dataset }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Upload Options -->
+                <div class="input-box hidden" id="uploadOptionsBox">
+                    <button type="button" class="toggle-button" onclick="showSingleUpload()">Upload One Dataset</button>
+                    <button type="button" class="toggle-button" onclick="showDoubleUpload()">Upload Two Datasets</button>
+                </div>
+
+                <!-- Single Upload Group -->
+                <div class="input-box hidden" id="singleUploadBox">
+                    <label for="uploaded_file">Upload a Dataset:</label>
+                    <input type="file" name="uploaded_file" id="uploaded_file" accept=".xarff">
+                </div>
+
+                <!-- Double Upload Group -->
+                <div class="input-box hidden" id="doubleUploadBox">
+                    <label for="uploaded_file1">Upload First Dataset:</label>
+                    <input type="file" name="uploaded_file1" id="uploaded_file1" accept=".xarff">
+                    <label for="uploaded_file2">Upload Second Dataset:</label>
+                    <input type="file" name="uploaded_file2" id="uploaded_file2" accept=".xarff">
+                </div>
+            </div>
+
+            <!-- Distance Algorithm Selection -->
+            <div class="form-group">
+                <label for="dist_algo">Select Distance Algorithm for Training:</label>
+                <select name="dist_algo" id="dist_algo">
+                    <option value="kendalltau">Kendall's Tau</option>
+                    <option value="ndcg">NDCG</option>
+                </select>
+            </div>
+
+            <!-- Distance Score Selection -->
+            <div class="form-group">
+                <label for="dist_score">Select Distance Algorithm for Scoring:</label>
+                <select name="dist_score" id="dist_score">
+                    <option value="kendalltau">Kendall's Tau</option>
+                    <option value="ndcg">NDCG</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="button">Run Algorithm</button>
+        </form>
+    </div>
+
+    <script>
+        function showDatasetList() {
+            document.getElementById('datasetListBox').classList.remove('hidden');
+            document.getElementById('uploadOptionsBox').classList.add('hidden');
+            document.getElementById('singleUploadBox').classList.add('hidden');
+            document.getElementById('doubleUploadBox').classList.add('hidden');
+        }
+
+        function showUploadOptions() {
+            document.getElementById('datasetListBox').classList.add('hidden');
+            document.getElementById('uploadOptionsBox').classList.remove('hidden');
+            document.getElementById('singleUploadBox').classList.add('hidden');
+            document.getElementById('doubleUploadBox').classList.add('hidden');
+        }
+
+        function showSingleUpload() {
+            document.getElementById('singleUploadBox').classList.remove('hidden');
+            document.getElementById('doubleUploadBox').classList.add('hidden');
+        }
+
+        function showDoubleUpload() {
+            document.getElementById('singleUploadBox').classList.add('hidden');
+            document.getElementById('doubleUploadBox').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

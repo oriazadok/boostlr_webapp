@@ -1,0 +1,17 @@
+@relation test_fold_3
+
+@attribute sex numeric
+@attribute age numeric
+@attribute answer_duration numeric
+@attribute lived_in_prefecture {0:Hokkaido,26:Osaka,29:Hyogo,40:Nagasaki,12:Chiba,42:Kumamoto,18:Aichi,27:Nara,13:Tokyo,16:Shizuoka,10:Gunma,31:Hiroshima,32:Tottori,15:Yamanashi,30:Okayama,4:Miyagi,39:Fukuoka,25:Kyoto,11:Saitama,35:Ehime,14:Kanagawa,24:Mie,23:Shiga,7:Niigata,34:Yamaguchi,17:Nagano,36:Kagawa,19:Gifu,43:Kagoshima,46:Okinawa,9:Tochigi,1:Aomori,3:Akita,8:Ibaraki,21:Ishikawa,20:Toyama,5:Yamagata,6:Fukushima,45:Oita,2:Iwate,28:Wakayama,44:Miyazaki,22:Fukui,37:Tokushima,33:Shimane,41:Saga,38:Kochi}
+@attribute lived_in_region {0:Hokkaido,6:Kinki,9:Kyushu,3:Kanto+Shizuoka,5:Chukyo,7:Chugoku,4:Nagano+Yamanashi,1:Tohoku,8:Shikoku,2:Hokuriku,10:Okinawa}
+@attribute lived_in {0:Eastern_Japan,1:Western_Japan}
+@attribute lives_in_prefecture {0:Hokkaido,26:Osaka,36:Kagawa,13:Tokyo,39:Fukuoka,18:Aichi,27:Nara,16:Shizuoka,8:Ibaraki,11:Saitama,12:Chiba,10:Gunma,14:Kanagawa,15:Yamanashi,40:Nagasaki,30:Okayama,25:Kyoto,35:Ehime,29:Hyogo,43:Kagoshima,24:Mie,23:Shiga,7:Niigata,4:Miyagi,31:Hiroshima,17:Nagano,42:Kumamoto,45:Oita,46:Okinawa,9:Tochigi,33:Shimane,1:Aomori,3:Akita,21:Ishikawa,19:Gifu,6:Fukushima,20:Toyama,28:Wakayama,44:Miyazaki,34:Yamaguchi,22:Fukui,2:Iwate,5:Yamagata,32:Tottori,41:Saga,37:Tokushima,38:Kochi}
+@attribute lives_in_region {0:Hokkaido,6:Kinki,8:Shikoku,3:Kanto+Shizuoka,9:Kyushu,5:Chukyo,4:Nagano+Yamanashi,7:Chugoku,2:Hokuriku,1:Tohoku,10:Okinawa}
+@attribute lives_in {0:Eastern_Japan,1:Western_Japan}
+@attribute changed_city numeric
+@attribute L RANKING {a,b,c,d,e,f,g,h,i,j}
+
+@data
+1,2,363,29:Hyogo,6:Kinki,1:Western_Japan,26:Osaka,6:Kinki,1:Western_Japan,1,h>a>c>d>i>e>f>b>j>g
+1,2,276,12:Chiba,3:Kanto+Shizuoka,0:Eastern_Japan,13:Tokyo,3:Kanto+Shizuoka,0:Eastern_Japan,1,g>c>j>a>f>b>e>i>h>d

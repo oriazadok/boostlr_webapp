@@ -1,0 +1,14 @@
+input:
+
+Model type: boost_LR based on kendall-tau / boost_LR based on NDCG
+Data: choose from a dropdown list of possible datasets (you know the datasets) or click to upload a new dataset
+
+    If new dataset: do you want to upload both a training set and a test set? (example scenario- you have some data for which you know the rankings of the instances, but you also have some other data for which you want predictions)
+        If yes - upload two files (training and test)
+        If no - upload one file and we will split (as you did up to now)
+
+Output:
+
+The predictions
+The distance metric - can be either NDCG or kendall-tau or both (if the user uploaded a test set so you can't compute the metric since you don't know the results)
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BoostLR Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            padding: 20px;
+        }
+        .result-box {
+            display: inline-block;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="result-box">
+        <h1>Algorithm Results</h1>
+        <p>Mean Kendall’s Tau Score: {{ '%.2f' | format(score * 100) }}%</p>
+        <a href="{{ url_for('input') }}">Run Again</a>
+    </div>
+</body>
+</html>
