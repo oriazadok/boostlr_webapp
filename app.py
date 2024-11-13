@@ -1,7 +1,8 @@
 import os
 from flask import Flask, render_template, request
+from sklearn.model_selection import train_test_split
 from src.BoostingLRWrapper import BoostingLRWrapper
-from src.utils import start_jvm, load_dataset_as_Instances, kendalls_tau, ndcg
+from src.utils import *
 
 app = Flask(__name__)
 
@@ -16,13 +17,12 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
-@app.route('/input', methods=['GET', 'POST'])
-def input():
-    if request.method == 'POST':
-        print("Form submitted successfully!")
-
+@app.route('/algo', methods=['GET', 'POST'])
+def algo():
     # Get the list of available datasets
     datasets = [f for f in os.listdir(DATASETS_FOLDER) if allowed_file(f)]
+
+    result = None  # Initialize result variable
 
     if request.method == 'POST':
         # Get the dataset choice from the dropdown
@@ -39,59 +39,88 @@ def input():
 
         # Determine which dataset(s) to use
         if dataset_choice and dataset_choice != '':
-            # User selected a dataset from the list
             dataset_path = os.path.join(DATASETS_FOLDER, dataset_choice)
             print("Selected dataset from list:", dataset_path)
 
         elif uploaded_file and allowed_file(uploaded_file.filename):
-            # User uploaded a single dataset
             filename = uploaded_file.filename
             dataset_path = os.path.join(DATASETS_FOLDER, filename)
             uploaded_file.save(dataset_path)
             print("Uploaded single dataset:", dataset_path)
 
         elif uploaded_file1 and allowed_file(uploaded_file1.filename) and uploaded_file2 and allowed_file(uploaded_file2.filename):
-            # User uploaded two datasets
             filename1 = uploaded_file1.filename
             filename2 = uploaded_file2.filename
             dataset_path1 = os.path.join(DATASETS_FOLDER, filename1)
             dataset_path2 = os.path.join(DATASETS_FOLDER, filename2)
             uploaded_file1.save(dataset_path1)
             uploaded_file2.save(dataset_path2)
-            print("Uploaded first dataset:", dataset_path1)
-            print("Uploaded second dataset:", dataset_path2)
-
+            print("Uploaded two datasets:", dataset_path1, dataset_path2)
         else:
-            # If neither a file nor a selection was made, return an error message
-            return render_template('input.html', datasets=datasets, error="Please select a dataset or upload a file.")
+            return render_template('algo.html', datasets=datasets, error="Please select a dataset or upload a file.")
 
-        # Map user choices to the actual functions
+        # Map user choices to functions
         dist_algo = kendalls_tau if dist_algo_choice == 'kendalltau' else ndcg
         dist_score = kendalls_tau if dist_score_choice == 'kendalltau' else ndcg
 
-        # Run the BoostLR algorithm based on the selected option
+        # Run the BoostLR algorithm
         if dataset_choice or uploaded_file:
-            # Use a single dataset
             result = run_boostlr(dataset_path, dist_algo, dist_score)
         elif uploaded_file1 and uploaded_file2:
-            # Use two datasets (train and test)
             result = run_boostlr_with_two_datasets(dataset_path1, dataset_path2, dist_algo, dist_score)
 
-        return render_template('results.html', score=result)
+    # Render input.html with the score result if available
+    return render_template('algo.html', datasets=datasets, score=result)
 
-    return render_template('input.html', datasets=datasets)
 
 def run_boostlr(dataset_path, dist_algo, dist_score):
-    # Load dataset
-    instances = load_dataset_as_Instances(dataset_path)
+
+    # Extract the base name (without extension) and directory
+    base_name = os.path.basename(dataset_path).replace(".xarff", "")
+    root_directory = os.path.dirname(os.path.dirname(dataset_path))
+
+    # Create the full paths and the desired string
+    train_base_name = f"tmp/{base_name}_train"
+    test_base_name = f"tmp/{base_name}_test"
+
+    predictions_base_name = f"predictions/{base_name}_predictions.csv"
+
+    train_dataset = os.path.join(root_directory, f"{train_base_name}.xarff")
+    test_dataset = os.path.join(root_directory, f"{test_base_name}.xarff")
+
+    predictions_path = os.path.join(root_directory, predictions_base_name)
+
+    # Load the dataset and get attribute information
+    df, attribute_info = load_xarff(dataset_path)
+
+
+    # Split the data into training and test sets using Pandas
+    train_data, test_data = train_test_split(df, test_size=0.2, random_state=42)
+
+    # Save the split datasets to XARFF files with the original attribute info
+    save_to_xarff(train_data, train_dataset, relation_name=train_base_name, attribute_info=attribute_info)
+    save_to_xarff(test_data, test_dataset, relation_name=test_base_name, attribute_info=attribute_info)
+
+    print("Training and test datasets saved to XARFF files.")
+
+    print("train_dataset: ", train_dataset)
+    # Load dataset as Instances
+    train_data_Instances = load_dataset_as_Instances(train_dataset)
+    test_data_Instances = load_dataset_as_Instances(test_dataset)
 
     # Initialize model
     model = BoostingLRWrapper(max_iterations=50, seed=7, dist_algo=dist_algo, dist_score=dist_score)
 
     # Train and score the model
-    model.fit(instances)
-    
-    score = model.score(instances)
+    model.fit(train_data_Instances)
+
+    predictions = model.predict(test_data_Instances)
+
+    labels = get_labels(attribute_info)
+
+    create_preds_test_file(predictions_path, test_data, predictions, labels)
+
+    score = model.score(test_data_Instances)
 
     return score
 
@@ -114,7 +143,55 @@ def run_boostlr_with_two_datasets(train_path, test_path, dist_algo, dist_score):
     return score
 
 
+def get_labels(attribute_info):
+    rankings_str = attribute_info['L']
+    labels_str = re.search(r"\{(.+?)\}", rankings_str).group(1)
+
+    # Split the string by commas to get the list of labels
+    labels = labels_str.split(',')
+
+    return labels
+
+def create_preds_test_file(predictions_path, test_data, predictions, labels):
+
+    # List to store the formatted predicted rankings
+    predicted_rankings = []
+
+    # Iterate over each row of predictions
+    for prediction in predictions:
+        # Get the sorted indices in ascending order (lowest value first)
+        sorted_indices = sorted(range(len(prediction)), key=lambda x: prediction[x])
+
+        # Map the sorted indices to the corresponding labels
+        ranked_labels = [labels[idx] for idx in sorted_indices]
+
+        # Create the ranking string (e.g., "g > i > a > d > h > c > f > j > e > b")
+        ranking_str = ">".join(ranked_labels)
+
+        # Append the ranking string to the list
+        predicted_rankings.append(ranking_str)
+
+    # Add the predicted rankings as a new column in the test DataFrame
+    test_data['Predicted_Ranking'] = predicted_rankings
+
+    # Save the test data with predictions as a CSV file
+    test_data.to_csv(predictions_path, index=False)
+    print(f"Predictions saved to {predictions_path}")
+
+
+
+def creates_dirs():
+    tmp = os.path.join("tmp")
+    if not os.path.exists(tmp):
+        os.makedirs(tmp)
+    
+    predictions = os.path.join("predictions")
+    if not os.path.exists(predictions):
+        os.makedirs(predictions)
+
+
 if __name__ == '__main__':
+    creates_dirs()
     start_jvm()  # Start JVM when the Flask app starts
     try:
         app.run(debug=True)

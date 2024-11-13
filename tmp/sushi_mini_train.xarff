@@ -1,4 +1,4 @@
-@relation test_fold_7
+@relation tmp/sushi_mini_train
 
 @attribute sex numeric
 @attribute age numeric
@@ -13,4 +13,13 @@
 @attribute L RANKING {a,b,c,d,e,f,g,h,i,j}
 
 @data
+0,2,336,42:Kumamoto,9:Kyushu,1:Western_Japan,39:Fukuoka,9:Kyushu,1:Western_Japan,1,c>d>h>i>a>e>f>g>b>j
+1,2,276,12:Chiba,3:Kanto+Shizuoka,0:Eastern_Japan,13:Tokyo,3:Kanto+Shizuoka,0:Eastern_Japan,1,g>c>j>a>f>b>e>i>h>d
+1,2,363,29:Hyogo,6:Kinki,1:Western_Japan,26:Osaka,6:Kinki,1:Western_Japan,1,h>a>c>d>i>e>f>b>j>g
+1,1,214,26:Osaka,6:Kinki,1:Western_Japan,26:Osaka,6:Kinki,1:Western_Japan,0,a>j>g>d>h>c>i>b>f>e
+1,2,191,26:Osaka,6:Kinki,1:Western_Japan,26:Osaka,6:Kinki,1:Western_Japan,0,h>e>f>b>a>d>i>c>j>g
+1,1,707,26:Osaka,6:Kinki,1:Western_Japan,36:Kagawa,8:Shikoku,1:Western_Japan,1,i>g>f>a>d>j>c>h>e>b
 1,2,196,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,13:Tokyo,3:Kanto+Shizuoka,0:Eastern_Japan,1,g>d>h>i>a>j>c>b>e>f
+1,1,623,27:Nara,6:Kinki,1:Western_Japan,27:Nara,6:Kinki,1:Western_Japan,0,h>i>d>c>g>f>a>e>j>b
+0,4,395,40:Nagasaki,9:Kyushu,1:Western_Japan,26:Osaka,6:Kinki,1:Western_Japan,1,e>f>h>a>c>d>b>g>i>j
+0,3,241,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0,e>h>a>b>c>i>d>f>j>g

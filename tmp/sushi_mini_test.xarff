@@ -1,4 +1,4 @@
-@relation test_fold_10
+@relation tmp/sushi_mini_test
 
 @attribute sex numeric
 @attribute age numeric
@@ -13,4 +13,6 @@
 @attribute L RANKING {a,b,c,d,e,f,g,h,i,j}
 
 @data
-0,3,241,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0,e>h>a>b>c>i>d>f>j>g
+1,1,416,13:Tokyo,3:Kanto+Shizuoka,0:Eastern_Japan,13:Tokyo,3:Kanto+Shizuoka,0:Eastern_Japan,0,e>h>b>d>c>f>g>i>a>j
+1,0,308,18:Aichi,5:Chukyo,0:Eastern_Japan,18:Aichi,5:Chukyo,0:Eastern_Japan,0,a>d>b>i>g>c>j>h>e>f
+0,2,355,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0,f>a>d>e>g>j>i>b>h>c

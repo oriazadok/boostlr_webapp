@@ -69,28 +69,17 @@
         .hidden {
             display: none;
         }
-        select,
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        .result-box {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #c8e6c9;
+            margin-top: 20px;
+            text-align: center;
         }
-        .button {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #fff;
-            background-color: #007BFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .button:hover {
-            background-color: #0056b3;
+        .result-score {
+            font-size: 1.5rem;
+            color: #388e3c;
         }
     </style>
 </head>
@@ -99,15 +88,11 @@
         <h1>Run BoostLR Algorithm</h1>
 
         <!-- Form Wrapper -->
-        <form action="{{ url_for('input') }}" method="post" enctype="multipart/form-data">
+        <form action="{{ url_for('algo') }}" method="post" enctype="multipart/form-data">
             <!-- Dataset Section -->
             <div class="dataset-section">
-                
-                
-                <!-- Button Row for Dataset Selection -->
                 <button type="button" class="toggle-button" id="listButton" onclick="showDatasetList()">Choose from List</button>
                 <button type="button" class="toggle-button" id="uploadButton" onclick="showUploadOptions()">Upload Dataset</button>
-               
 
                 <!-- Dataset List Group -->
                 <div class="input-box hidden" id="datasetListBox">
@@ -162,31 +147,25 @@
             <!-- Submit Button -->
             <button type="submit" class="button">Run Algorithm</button>
         </form>
+
+        <!-- Result Section -->
+        {% if score is not none %}
+        <div class="result-box">
+            <h2>Algorithm Results</h2>
+            <p class="result-score">Mean Kendall’s Tau Score: {{ '%.2f' | format(score * 100) }}%</p>
+        </div>
+        {% endif %}
     </div>
 
     <script>
         function showDatasetList() {
             document.getElementById('datasetListBox').classList.remove('hidden');
             document.getElementById('uploadOptionsBox').classList.add('hidden');
-            document.getElementById('singleUploadBox').classList.add('hidden');
-            document.getElementById('doubleUploadBox').classList.add('hidden');
         }
 
         function showUploadOptions() {
             document.getElementById('datasetListBox').classList.add('hidden');
             document.getElementById('uploadOptionsBox').classList.remove('hidden');
-            document.getElementById('singleUploadBox').classList.add('hidden');
-            document.getElementById('doubleUploadBox').classList.add('hidden');
-        }
-
-        function showSingleUpload() {
-            document.getElementById('singleUploadBox').classList.remove('hidden');
-            document.getElementById('doubleUploadBox').classList.add('hidden');
-        }
-
-        function showDoubleUpload() {
-            document.getElementById('singleUploadBox').classList.add('hidden');
-            document.getElementById('doubleUploadBox').classList.remove('hidden');
         }
     </script>
 </body>

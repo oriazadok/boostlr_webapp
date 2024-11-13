@@ -1,5 +1,0 @@
-Exp     algo             score            mean      std     
-1       kendalls_tau     kendalls_tau     -0.44%    21.45%
-2       kendalls_tau     ndcg             80.81%    8.54%
-3       ndcg             kendalls_tau     0.22%     23.76%
-4       ndcg             ndcg             81.21%    9.06%
