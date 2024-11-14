@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from sklearn.model_selection import train_test_split
 from src.BoostingLRWrapper import BoostingLRWrapper
 from src.utils import *
@@ -9,6 +9,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATASETS_FOLDER = os.path.join(BASE_DIR, 'datasets')
 ALLOWED_EXTENSIONS = {'xarff'}
+PREDICTIONS_FOLDER = os.path.join(BASE_DIR, 'predictions')
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -19,59 +20,36 @@ def index():
 
 @app.route('/algo', methods=['GET', 'POST'])
 def algo():
-    # Get the list of available datasets
     datasets = [f for f in os.listdir(DATASETS_FOLDER) if allowed_file(f)]
-
-    result = None  # Initialize result variable
+    result = None
+    predictions_filename = None
 
     if request.method == 'POST':
-        # Get the dataset choice from the dropdown
         dataset_choice = request.form.get('dataset_choice')
-
-        # Get the uploaded files (single or double upload)
         uploaded_file = request.files.get('uploaded_file')
-        uploaded_file1 = request.files.get('uploaded_file1')
-        uploaded_file2 = request.files.get('uploaded_file2')
-
-        # Get the metric selections
         dist_algo_choice = request.form.get('dist_algo')
         dist_score_choice = request.form.get('dist_score')
 
-        # Determine which dataset(s) to use
         if dataset_choice and dataset_choice != '':
             dataset_path = os.path.join(DATASETS_FOLDER, dataset_choice)
-            print("Selected dataset from list:", dataset_path)
-
         elif uploaded_file and allowed_file(uploaded_file.filename):
             filename = uploaded_file.filename
             dataset_path = os.path.join(DATASETS_FOLDER, filename)
             uploaded_file.save(dataset_path)
-            print("Uploaded single dataset:", dataset_path)
-
-        elif uploaded_file1 and allowed_file(uploaded_file1.filename) and uploaded_file2 and allowed_file(uploaded_file2.filename):
-            filename1 = uploaded_file1.filename
-            filename2 = uploaded_file2.filename
-            dataset_path1 = os.path.join(DATASETS_FOLDER, filename1)
-            dataset_path2 = os.path.join(DATASETS_FOLDER, filename2)
-            uploaded_file1.save(dataset_path1)
-            uploaded_file2.save(dataset_path2)
-            print("Uploaded two datasets:", dataset_path1, dataset_path2)
         else:
             return render_template('algo.html', datasets=datasets, error="Please select a dataset or upload a file.")
 
-        # Map user choices to functions
         dist_algo = kendalls_tau if dist_algo_choice == 'kendalltau' else ndcg
         dist_score = kendalls_tau if dist_score_choice == 'kendalltau' else ndcg
 
-        # Run the BoostLR algorithm
-        if dataset_choice or uploaded_file:
-            result = run_boostlr(dataset_path, dist_algo, dist_score)
-        elif uploaded_file1 and uploaded_file2:
-            result = run_boostlr_with_two_datasets(dataset_path1, dataset_path2, dist_algo, dist_score)
+        result, predictions_filename = run_boostlr(dataset_path, dist_algo, dist_score)
 
-    # Render input.html with the score result if available
-    return render_template('algo.html', datasets=datasets, score=result)
+    return render_template('algo.html', datasets=datasets, score=result, predictions_filename=predictions_filename)
 
+@app.route('/download/<filename>')
+def download_predictions(filename):
+    predictions_folder = os.path.join(BASE_DIR, 'predictions')
+    return send_from_directory(predictions_folder, filename, as_attachment=True)
 
 def run_boostlr(dataset_path, dist_algo, dist_score):
 
@@ -122,7 +100,7 @@ def run_boostlr(dataset_path, dist_algo, dist_score):
 
     score = model.score(test_data_Instances)
 
-    return score
+    return score, predictions_base_name
 
 def run_boostlr_with_two_datasets(train_path, test_path, dist_algo, dist_score):
     # Load datasets

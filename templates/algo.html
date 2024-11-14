@@ -153,6 +153,9 @@
         <div class="result-box">
             <h2>Algorithm Results</h2>
             <p class="result-score">Mean Kendall’s Tau Score: {{ '%.2f' | format(score * 100) }}%</p>
+
+            <!-- Download Button for Predictions File -->
+            <a href="{{ url_for('download_predictions', filename=predictions_filename.split('/')[-1]) }}" class="button">Download Predictions</a>
         </div>
         {% endif %}
     </div>
