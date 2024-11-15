@@ -249,28 +249,41 @@
 
     <script>
         function showDatasetList() {
+            // Show the dataset list and hide upload options
             document.getElementById('datasetListBox').classList.remove('hidden');
             document.getElementById('uploadOptionsBox').classList.add('hidden');
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
+    
+            // Clear file inputs when switching to the dataset list
+            document.getElementById('uploaded_file').value = "";
+            document.getElementById('uploaded_file1').value = "";
+            document.getElementById('uploaded_file2').value = "";
         }
-
+    
         function showUploadOptions() {
+            // Show the upload options and hide dataset list
             document.getElementById('datasetListBox').classList.add('hidden');
             document.getElementById('uploadOptionsBox').classList.remove('hidden');
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
+    
+            // Clear the dataset selection when switching to upload options
+            document.getElementById('dataset').value = "";
         }
-
+    
         function showSingleUpload() {
+            // Show the single upload input and hide double upload input
             document.getElementById('singleUploadBox').classList.remove('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
         }
-
+    
         function showDoubleUpload() {
+            // Show the double upload input and hide single upload input
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.remove('hidden');
         }
     </script>
+    
 </body>
 </html>
