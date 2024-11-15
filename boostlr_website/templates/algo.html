@@ -85,21 +85,52 @@
 
             <!-- Submit Button -->
             <div class="button-container">
-                <button type="submit" class="button">Run Algorithm</button>
+                <button type="submit" class="button" id="runButton">Run Algorithm</button>
             </div>
         </form>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="hidden">
+            <p id="loadingText">Training<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></p>
+        </div>
 
         <!-- Result Section -->
         {% if score is not none %}
         <div class="result-box">
             <h2>Algorithm Results</h2>
-            <p class="result-score">Mean Kendall’s Tau Score: {{ '%.2f' | format(score * 100) }}%</p>
+            <p class="result-score">Score: {{ '%.2f' | format(score * 100) }}%</p>
             <a href="{{ url_for('download_predictions', filename=predictions_filename.split('/')[-1]) }}" class="download-button">Download Predictions</a>
         </div>
         {% endif %}
     </div>
 
     <script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.querySelector('form');
+            const runButton = document.getElementById('runButton');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultBox = document.querySelector('.result-box');
+
+            // Attach the event listener to the form submit event
+            form.addEventListener('submit', (event) => {
+
+                // Hide the result box if it is visible
+                if (resultBox) {
+                    resultBox.classList.add('hidden');
+                }
+
+
+                // Show the loading indicator
+                loadingIndicator.classList.remove('hidden');
+
+                // Disable the button to prevent multiple clicks
+                runButton.disabled = true;
+            });
+        });
+
+
+        
         function showDatasetList() {
             // Show the dataset list and hide upload options
             document.getElementById('datasetListBox').classList.remove('hidden');
@@ -128,12 +159,29 @@
             // Show the single upload input and hide double upload input
             document.getElementById('singleUploadBox').classList.remove('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
+
+            // Clear the double upload file inputs
+            document.getElementById('uploaded_file1').value = "";
+            document.getElementById('uploaded_file2').value = "";
         }
-    
+
         function showDoubleUpload() {
             // Show the double upload input and hide single upload input
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.remove('hidden');
+
+            // Clear the single upload file input
+            document.getElementById('uploaded_file').value = "";
+        }
+
+        function showLoading() {
+            // Disable the "Run Algorithm" button
+            const runButton = document.getElementById('runButton');
+            runButton.disabled = true;
+
+            // Show the loading indicator
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            loadingIndicator.classList.remove('hidden');
         }
     </script>
     
