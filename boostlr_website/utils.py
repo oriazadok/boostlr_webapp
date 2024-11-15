@@ -58,6 +58,10 @@ def run_boostlr(dataset_path, dist_algo, dist_score):
 
 def run_boostlr_with_two_datasets(train_path, test_path, dist_algo, dist_score):
 
+    base_name = os.path.basename(test_path).replace(".xarff", "")
+    predictions_base_name = f"predictions/{base_name}_predictions.csv"
+    predictions_path = os.path.join(ROOT_DIR, predictions_base_name)
+
     # Load datasets
     train_instances = load_dataset_as_Instances(train_path)
     test_instances = load_dataset_as_Instances(test_path)
@@ -69,11 +73,17 @@ def run_boostlr_with_two_datasets(train_path, test_path, dist_algo, dist_score):
     model.fit(train_instances)
     print("Model trained on training dataset")
 
+    predictions = model.predict(test_instances)
+    test_data_df, attribute_info = load_xarff(test_path)
+    labels = get_labels(attribute_info)
+
+    create_preds_test_file(predictions_path, test_data_df, predictions, labels)
+
     # Score the model using the test dataset
     score = model.score(test_instances)
     print("Model scored on test dataset")
 
-    return score
+    return score, predictions_base_name
 
 def get_labels(attribute_info):
     rankings_str = attribute_info['L']

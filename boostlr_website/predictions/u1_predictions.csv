@@ -1,0 +1,4 @@
+sex,age,answer_duration,lived_in_prefecture,lived_in_region,lived_in,lives_in_prefecture,lives_in_region,lives_in,changed_city,L,Predicted_Ranking
+1,1,416,13:Tokyo,3:Kanto+Shizuoka,0:Eastern_Japan,13:Tokyo,3:Kanto+Shizuoka,0:Eastern_Japan,0,e>h>b>d>c>f>g>i>a>j,g>i>a>d>h>c>f>j>e>b
+1,0,308,18:Aichi,5:Chukyo,0:Eastern_Japan,18:Aichi,5:Chukyo,0:Eastern_Japan,0,a>d>b>i>g>c>j>h>e>f,h>a>i>d>c>g>f>e>j>b
+0,2,355,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0:Hokkaido,0:Hokkaido,0:Eastern_Japan,0,f>a>d>e>g>j>i>b>h>c,a>c>h>e>d>b>i>f>g>j

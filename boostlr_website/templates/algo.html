@@ -87,6 +87,12 @@
     <div class="container">
         <h1>Run BoostLR Algorithm</h1>
 
+        <!-- Error Message Section -->
+        {% if error %}
+        <div class="input-box" style="background-color: #ffdddd; border: 2px solid #ff8888; color: #d8000c; margin-bottom: 20px;">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
         <!-- Form Wrapper -->
         <form action="{{ url_for('algo') }}" method="post" enctype="multipart/form-data">
             <!-- Dataset Section -->
@@ -164,12 +170,27 @@
         function showDatasetList() {
             document.getElementById('datasetListBox').classList.remove('hidden');
             document.getElementById('uploadOptionsBox').classList.add('hidden');
+            document.getElementById('singleUploadBox').classList.add('hidden');
+            document.getElementById('doubleUploadBox').classList.add('hidden');
         }
-
+    
         function showUploadOptions() {
             document.getElementById('datasetListBox').classList.add('hidden');
             document.getElementById('uploadOptionsBox').classList.remove('hidden');
+            document.getElementById('singleUploadBox').classList.add('hidden');
+            document.getElementById('doubleUploadBox').classList.add('hidden');
+        }
+    
+        function showSingleUpload() {
+            document.getElementById('singleUploadBox').classList.remove('hidden');
+            document.getElementById('doubleUploadBox').classList.add('hidden');
+        }
+    
+        function showDoubleUpload() {
+            document.getElementById('singleUploadBox').classList.add('hidden');
+            document.getElementById('doubleUploadBox').classList.remove('hidden');
         }
     </script>
+    
 </body>
 </html>
