@@ -35,7 +35,6 @@ def run_boostlr(dataset_path, dist_algo, dist_score):
 
     print("Training and test datasets saved to XARFF files.")
 
-    print("train_dataset: ", train_dataset)
     # Load dataset as Instances
     train_data_Instances = load_dataset_as_Instances(train_dataset)
     test_data_Instances = load_dataset_as_Instances(test_dataset)
@@ -98,7 +97,7 @@ def create_preds_test_file(predictions_path, test_data, predictions, labels):
 
     # List to store the formatted predicted rankings
     predicted_rankings = []
-
+    
     # Iterate over each row of predictions
     for prediction in predictions:
         # Get the sorted indices in ascending order (lowest value first)
