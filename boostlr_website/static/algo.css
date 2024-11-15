@@ -1,0 +1,145 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+    background: #e0e7ff; 
+    color: #333;
+    padding: 20px;
+}
+.container {
+    max-width: 650px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+h1 {
+    text-align: center;
+    color: #4a90e2;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+.form-group, .dataset-section {
+    margin-bottom: 25px;
+}
+.dataset-section {
+    background-color: #f0faff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 2px solid #c3e0e5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+}
+label {
+    font-weight: 600;
+    color: #4a90e2;
+    margin-bottom: 10px;
+    display: block;
+}
+select, input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #b0c4d8;
+    border-radius: 8px;
+    background-color: #eef5ff;
+    font-size: 1rem;
+    color: #333;
+}
+select:focus, input[type="file"]:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.toggle-button {
+    width: 200px; /* Set a fixed width for consistent button size */
+}
+.toggle-button, .button {
+    flex: 1;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: #4a90e2;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.toggle-button:hover, .button:hover {
+    background: #357ab8;
+    transform: translateY(-3px);
+}
+.input-box {
+    padding: 15px;
+    border: 2px solid #c3dfe2;
+    border-radius: 10px;
+    background-color: #f9f9ff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+.hidden {
+    display: none;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.upload-button-row {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.toggle-button {
+    width: 200px; /* Keep a consistent width for all toggle buttons */
+}
+.result-box {
+    background: #e3fcef;
+    padding: 25px;
+    border-radius: 10px;
+    border: 2px solid #c3e6cb;
+    text-align: center;
+    margin-top: 20px;
+}
+.result-score {
+    font-size: 1.75rem;
+    color: #2f855a;
+    font-weight: 700;
+}
+.error-box {
+    background-color: #fdecea;
+    color: #d32f2f;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #f5c6cb;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.download-button {
+    display: inline-block;
+    padding: 12px 20px;
+    margin-top: 20px;
+    background-color: #38a169;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+}
+.download-button:hover {
+    background-color: #2f855a;
+}
+.space {
+    margin-top: 20px;
+}
