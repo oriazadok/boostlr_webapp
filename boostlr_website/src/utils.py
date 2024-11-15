@@ -11,7 +11,7 @@ from sklearn.metrics import ndcg_score
 def start_jvm():
     # Start the JVM and set up the classpath
     jvm_args = ["-Xmx1g"]  # Set maximum heap size for JVM
-    cp = ["./src", "./src/lib/*", "./src/weka"]  # Set the classpath for Weka and other Java dependencies
+    cp = ["./boostlr_website/src", "./boostlr_website/src/lib/*", "./boostlr_website/src/weka"]  # Set the classpath for Weka and other Java dependencies
     jpype.startJVM(*jvm_args, classpath=cp, convertStrings=True)
 
 def stop_jvm():

@@ -1,5 +1,5 @@
 from jpype import JClass
-from src.BoostingLR import BoostingLR
+from boostlr_website.src.BoostingLR import BoostingLR
 
 class BoostingLRWrapper:
     def __init__(self, max_iterations=50, seed=None, dist_algo=None, dist_score=None):
