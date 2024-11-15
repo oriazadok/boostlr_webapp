@@ -4,82 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Dataset and Metrics - BoostLR</title>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/algo.css">
+
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
         body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f0f4f8;
+            font-family: 'Roboto', sans-serif;
+            background: #e0e7ff; 
             color: #333;
-            margin: 0;
             padding: 20px;
         }
         .container {
-            max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 650px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
-            color: #007BFF;
-        }
-        .form-group {
+            color: #4a90e2;
+            font-size: 2.5rem;
             margin-bottom: 20px;
+        }
+        .form-group, .dataset-section {
+            margin-bottom: 25px;
         }
         .dataset-section {
-            background-color: #e0f7fa;
+            background-color: #f0faff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #c3e0e5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+        }
+        label {
+            font-weight: 600;
+            color: #4a90e2;
+            margin-bottom: 10px;
+            display: block;
+        }
+        select, input[type="file"] {
+            width: 100%;
             padding: 10px;
-            border-radius: 10px;
-            border: 2px solid #b2ebf2;
-            margin-bottom: 20px;
+            border: 2px solid #b0c4d8;
+            border-radius: 8px;
+            background-color: #eef5ff;
+            font-size: 1rem;
+            color: #333;
+        }
+        select:focus, input[type="file"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
         }
         .button-row {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            gap: 15px;
             margin-bottom: 20px;
         }
+
         .toggle-button {
-            width: 48%;
-            padding: 10px;
-            font-size: 16px;
+            width: 200px; /* Set a fixed width for consistent button size */
+        }
+        .toggle-button, .button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1rem;
             font-weight: 600;
             color: #fff;
-            background-color: #007BFF;
+            background: #4a90e2;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
-        .toggle-button:hover {
-            background-color: #0056b3;
+        .toggle-button:hover, .button:hover {
+            background: #357ab8;
+            transform: translateY(-3px);
         }
         .input-box {
             padding: 15px;
-            border: 2px solid #ddd;
+            border: 2px solid #c3dfe2;
             border-radius: 10px;
-            margin-top: 20px;
+            background-color: #f9f9ff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
-            background-color: #f9f9f9;
         }
         .hidden {
             display: none;
         }
-        .result-box {
-            background-color: #e8f5e9;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #c8e6c9;
+        .button-container {
+            display: flex;
+            justify-content: center;
             margin-top: 20px;
+        }
+        .upload-button-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .toggle-button {
+            width: 200px; /* Keep a consistent width for all toggle buttons */
+        }
+        .result-box {
+            background: #e3fcef;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #c3e6cb;
             text-align: center;
+            margin-top: 20px;
         }
         .result-score {
-            font-size: 1.5rem;
-            color: #388e3c;
+            font-size: 1.75rem;
+            color: #2f855a;
+            font-weight: 700;
+        }
+        .error-box {
+            background-color: #fdecea;
+            color: #d32f2f;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #f5c6cb;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .download-button {
+            display: inline-block;
+            padding: 12px 20px;
+            margin-top: 20px;
+            background-color: #38a169;
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+        .download-button:hover {
+            background-color: #2f855a;
+        }
+        .space {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -89,20 +161,23 @@
 
         <!-- Error Message Section -->
         {% if error %}
-        <div class="input-box" style="background-color: #ffdddd; border: 2px solid #ff8888; color: #d8000c; margin-bottom: 20px;">
+        <div class="error-box">
             <p>{{ error }}</p>
         </div>
         {% endif %}
+
         <!-- Form Wrapper -->
         <form action="{{ url_for('algo') }}" method="post" enctype="multipart/form-data">
             <!-- Dataset Section -->
             <div class="dataset-section">
-                <button type="button" class="toggle-button" id="listButton" onclick="showDatasetList()">Choose from List</button>
-                <button type="button" class="toggle-button" id="uploadButton" onclick="showUploadOptions()">Upload Dataset</button>
+                <div class="button-row">
+                    <button type="button" class="toggle-button" id="listButton" onclick="showDatasetList()">Select Dataset</button>
+                    <button type="button" class="toggle-button" id="uploadButton" onclick="showUploadOptions()">Upload Dataset</button>
+                </div>
 
                 <!-- Dataset List Group -->
                 <div class="input-box hidden" id="datasetListBox">
-                    <label for="dataset">Select a Dataset:</label>
+                    <label for="dataset">Select a Dataset for train and test:</label>
                     <select name="dataset_choice" id="dataset">
                         <option value="">Choose a Dataset</option>
                         {% for dataset in datasets %}
@@ -113,22 +188,28 @@
 
                 <!-- Upload Options -->
                 <div class="input-box hidden" id="uploadOptionsBox">
-                    <button type="button" class="toggle-button" onclick="showSingleUpload()">Upload One Dataset</button>
-                    <button type="button" class="toggle-button" onclick="showDoubleUpload()">Upload Two Datasets</button>
+                    <div class="upload-button-row">
+                        <button type="button" class="toggle-button" onclick="showSingleUpload()">Upload One Dataset</button>
+                        <button type="button" class="toggle-button" onclick="showDoubleUpload()">Upload Two Datasets</button>
+                    </div>
                 </div>
 
                 <!-- Single Upload Group -->
                 <div class="input-box hidden" id="singleUploadBox">
-                    <label for="uploaded_file">Upload a Dataset:</label>
+                    <label for="uploaded_file">Upload a Dataset For Train and Test:</label>
                     <input type="file" name="uploaded_file" id="uploaded_file" accept=".xarff">
                 </div>
 
                 <!-- Double Upload Group -->
                 <div class="input-box hidden" id="doubleUploadBox">
-                    <label for="uploaded_file1">Upload First Dataset:</label>
-                    <input type="file" name="uploaded_file1" id="uploaded_file1" accept=".xarff">
-                    <label for="uploaded_file2">Upload Second Dataset:</label>
-                    <input type="file" name="uploaded_file2" id="uploaded_file2" accept=".xarff">
+                    <div class="space">
+                        <label for="uploaded_file1">Upload Dataset For Train:</label>
+                        <input type="file" name="uploaded_file1" id="uploaded_file1" accept=".xarff">
+                    </div>
+                    <div class="space">
+                        <label for="uploaded_file2">Upload Dataset For Test:</label>
+                        <input type="file" name="uploaded_file2" id="uploaded_file2" accept=".xarff">
+                    </div>
                 </div>
             </div>
 
@@ -151,7 +232,9 @@
             </div>
 
             <!-- Submit Button -->
-            <button type="submit" class="button">Run Algorithm</button>
+            <div class="button-container">
+                <button type="submit" class="button">Run Algorithm</button>
+            </div>
         </form>
 
         <!-- Result Section -->
@@ -159,9 +242,7 @@
         <div class="result-box">
             <h2>Algorithm Results</h2>
             <p class="result-score">Mean Kendall’s Tau Score: {{ '%.2f' | format(score * 100) }}%</p>
-
-            <!-- Download Button for Predictions File -->
-            <a href="{{ url_for('download_predictions', filename=predictions_filename.split('/')[-1]) }}" class="button">Download Predictions</a>
+            <a href="{{ url_for('download_predictions', filename=predictions_filename.split('/')[-1]) }}" class="download-button">Download Predictions</a>
         </div>
         {% endif %}
     </div>
@@ -173,24 +254,23 @@
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
         }
-    
+
         function showUploadOptions() {
             document.getElementById('datasetListBox').classList.add('hidden');
             document.getElementById('uploadOptionsBox').classList.remove('hidden');
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
         }
-    
+
         function showSingleUpload() {
             document.getElementById('singleUploadBox').classList.remove('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
         }
-    
+
         function showDoubleUpload() {
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.remove('hidden');
         }
     </script>
-    
 </body>
 </html>

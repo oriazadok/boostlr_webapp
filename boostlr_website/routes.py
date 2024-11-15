@@ -26,8 +26,6 @@ def algo():
         dist_algo_choice = request.form.get('dist_algo')
         dist_score_choice = request.form.get('dist_score')
 
-        print("dataset_choice:", dataset_choice)
-
         # Determine which dataset(s) to use
         if dataset_choice and dataset_choice != '':
             dataset_path = os.path.join(DATASETS_FOLDER, dataset_choice)
