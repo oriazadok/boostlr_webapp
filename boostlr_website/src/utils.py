@@ -8,11 +8,27 @@ from jpype import JClass
 from scipy.stats import kendalltau
 from sklearn.metrics import ndcg_score
 
+# def start_jvm():
+#     # Start the JVM and set up the classpath
+#     jvm_args = ["-Xmx1g"]  # Set maximum heap size for JVM
+#     cp = ["./boostlr_website/src", "./boostlr_website/src/lib/*", "./boostlr_website/src/weka"]  # Set the classpath for Weka and other Java dependencies
+#     jpype.startJVM(*jvm_args, classpath=cp, convertStrings=True)
+
 def start_jvm():
-    # Start the JVM and set up the classpath
-    jvm_args = ["-Xmx1g"]  # Set maximum heap size for JVM
-    cp = ["./boostlr_website/src", "./boostlr_website/src/lib/*", "./boostlr_website/src/weka"]  # Set the classpath for Weka and other Java dependencies
-    jpype.startJVM(*jvm_args, classpath=cp, convertStrings=True)
+    """Start the JVM if it's not already running."""
+    if not jpype.isJVMStarted():
+        try:
+            jvm_args = ["-Xmx1g"]
+            # Start the JVM with the specified classpath
+            cp = ["./boostlr_website/src", "./boostlr_website/src/lib/*", "./boostlr_website/src/weka"]
+            jpype.startJVM(*jvm_args, classpath=cp, convertStrings=True)
+            print("JVM started successfully.")
+        except Exception as e:
+            print(f"Error starting JVM: {e}")
+            raise
+    else:
+        print("JVM is already running.")
+
 
 def stop_jvm():
     jpype.shutdownJVM()

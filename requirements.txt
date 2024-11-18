@@ -3,3 +3,5 @@ JPype1
 numpy
 pandas
 scikit-learn
+celery
+redis

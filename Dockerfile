@@ -15,24 +15,17 @@ RUN wget -O /tmp/temurin-8.tar.gz https://github.com/adoptium/temurin8-binaries/
 ENV JAVA_HOME=/usr/local/java
 ENV PATH="$JAVA_HOME/bin:$PATH"
 
-# Verify Java installation
-RUN java -version
-
-# Set the working directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the project files to the container
+# Copy project files
 COPY . /app
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose the Flask port
+# Expose Flask port
 EXPOSE 5000
 
-# Set environment variables for Flask
-ENV FLASK_APP=run.py
-ENV FLASK_ENV=production
-
-# Command to run the Flask application
+# Command to run the Flask app
 CMD ["python", "run.py"]

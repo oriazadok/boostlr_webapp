@@ -19,7 +19,7 @@
         {% endif %}
 
         <!-- Form Wrapper -->
-        <form action="{{ url_for('algo') }}" method="post" enctype="multipart/form-data">
+        <form id="algoForm" action="{{ url_for('algo') }}" method="post" enctype="multipart/form-data">
             <!-- Dataset Section -->
             <div class="dataset-section">
                 <div class="button-row">
@@ -27,7 +27,6 @@
                     <button type="button" class="toggle-button" id="uploadButton" onclick="showUploadOptions()">Upload Dataset</button>
                 </div>
 
-                <!-- Dataset List Group -->
                 <div class="input-box hidden" id="datasetListBox">
                     <label for="dataset">Select a Dataset for train and test:</label>
                     <select name="dataset_choice" id="dataset">
@@ -38,7 +37,6 @@
                     </select>
                 </div>
 
-                <!-- Upload Options -->
                 <div class="input-box hidden" id="uploadOptionsBox">
                     <div class="upload-button-row">
                         <button type="button" class="toggle-button" onclick="showSingleUpload()">Upload One Dataset</button>
@@ -46,13 +44,11 @@
                     </div>
                 </div>
 
-                <!-- Single Upload Group -->
                 <div class="input-box hidden" id="singleUploadBox">
                     <label for="uploaded_file">Upload a Dataset For Train and Test:</label>
                     <input type="file" name="uploaded_file" id="uploaded_file" accept=".xarff">
                 </div>
 
-                <!-- Double Upload Group -->
                 <div class="input-box hidden" id="doubleUploadBox">
                     <div class="space">
                         <label for="uploaded_file1">Upload Dataset For Train:</label>
@@ -65,7 +61,6 @@
                 </div>
             </div>
 
-            <!-- Distance Algorithm Selection -->
             <div class="form-group">
                 <label for="dist_algo">Select Distance Algorithm for Training:</label>
                 <select name="dist_algo" id="dist_algo">
@@ -74,7 +69,6 @@
                 </select>
             </div>
 
-            <!-- Distance Score Selection -->
             <div class="form-group">
                 <label for="dist_score">Select Distance Algorithm for Scoring:</label>
                 <select name="dist_score" id="dist_score">
@@ -83,56 +77,93 @@
                 </select>
             </div>
 
-            <!-- Submit Button -->
             <div class="button-container">
                 <button type="submit" class="button" id="runButton">Run Algorithm</button>
             </div>
         </form>
 
-        <!-- Loading Indicator -->
         <div id="loadingIndicator" class="hidden">
             <p id="loadingText">Training<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></p>
         </div>
 
-        <!-- Result Section -->
-        {% if score is not none %}
-        <div class="result-box">
+        <div id="resultBox" class="hidden">
             <h2>Algorithm Results</h2>
-            <p class="result-score">Score: {{ '%.2f' | format(score * 100) }}%</p>
-            <a href="{{ url_for('download_predictions', filename=predictions_filename.split('/')[-1]) }}" class="download-button">Download Predictions</a>
+            <p id="resultScore" class="result-score"></p>
+            <a id="downloadLink" class="download-button" href="#">Download Predictions</a>
         </div>
-        {% endif %}
     </div>
 
     <script>
-
         document.addEventListener("DOMContentLoaded", () => {
-            const form = document.querySelector('form');
+            const form = document.getElementById('algoForm');
             const runButton = document.getElementById('runButton');
             const loadingIndicator = document.getElementById('loadingIndicator');
-            const resultBox = document.querySelector('.result-box');
-
+            const resultBox = document.getElementById('resultBox');
+            const resultScore = document.getElementById('resultScore');
+            const downloadLink = document.getElementById('downloadLink');
+    
+            // Check for ongoing task when the page loads
+            checkTaskStatus();
+    
             // Attach the event listener to the form submit event
             form.addEventListener('submit', (event) => {
-
+                event.preventDefault();
+    
                 // Hide the result box if it is visible
-                if (resultBox) {
-                    resultBox.classList.add('hidden');
-                }
-
-
+                resultBox.classList.add('hidden');
+    
                 // Show the loading indicator
                 loadingIndicator.classList.remove('hidden');
-
+    
                 // Disable the button to prevent multiple clicks
                 runButton.disabled = true;
+    
+                // Submit the form data via AJAX
+                const formData = new FormData(form);
+                fetch("{{ url_for('algo') }}", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.task_id) {
+                        checkTaskStatus(data.task_id);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    runButton.disabled = false;
+                    loadingIndicator.classList.add('hidden');
+                });
             });
         });
-
-
-        
+    
+        // Function to check the status of the task
+        function checkTaskStatus(taskId = null) {
+            fetch(`/status/${taskId || 'latest'}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'SUCCESS') {
+                    const loadingIndicator = document.getElementById('loadingIndicator');
+                    const resultBox = document.getElementById('resultBox');
+                    const resultScore = document.getElementById('resultScore');
+                    const downloadLink = document.getElementById('downloadLink');
+    
+                    loadingIndicator.classList.add('hidden');
+                    resultBox.classList.remove('hidden');
+                    resultScore.textContent = `Score: ${(data.result.result * 100).toFixed(2)}%`;
+                    downloadLink.href = `/download/${data.result.predictions_filename.split('/').pop()}`;
+                } else if (data.status === 'PENDING') {
+                    setTimeout(() => checkTaskStatus(taskId), 5000);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    
+        // Functions to show and hide dataset selection and upload options
         function showDatasetList() {
-            // Show the dataset list and hide upload options
             document.getElementById('datasetListBox').classList.remove('hidden');
             document.getElementById('uploadOptionsBox').classList.add('hidden');
             document.getElementById('singleUploadBox').classList.add('hidden');
@@ -145,7 +176,6 @@
         }
     
         function showUploadOptions() {
-            // Show the upload options and hide dataset list
             document.getElementById('datasetListBox').classList.add('hidden');
             document.getElementById('uploadOptionsBox').classList.remove('hidden');
             document.getElementById('singleUploadBox').classList.add('hidden');
@@ -156,32 +186,20 @@
         }
     
         function showSingleUpload() {
-            // Show the single upload input and hide double upload input
             document.getElementById('singleUploadBox').classList.remove('hidden');
             document.getElementById('doubleUploadBox').classList.add('hidden');
-
+    
             // Clear the double upload file inputs
             document.getElementById('uploaded_file1').value = "";
             document.getElementById('uploaded_file2').value = "";
         }
-
+    
         function showDoubleUpload() {
-            // Show the double upload input and hide single upload input
             document.getElementById('singleUploadBox').classList.add('hidden');
             document.getElementById('doubleUploadBox').classList.remove('hidden');
-
+    
             // Clear the single upload file input
             document.getElementById('uploaded_file').value = "";
-        }
-
-        function showLoading() {
-            // Disable the "Run Algorithm" button
-            const runButton = document.getElementById('runButton');
-            runButton.disabled = true;
-
-            // Show the loading indicator
-            const loadingIndicator = document.getElementById('loadingIndicator');
-            loadingIndicator.classList.remove('hidden');
         }
     </script>
     
