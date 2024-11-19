@@ -5,3 +5,4 @@ pandas
 scikit-learn
 celery
 redis
+git+https://github.com/oriazadok/scikit-learn.git

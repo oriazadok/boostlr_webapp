@@ -3,6 +3,8 @@ FROM python:3.10-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y wget gnupg2 ca-certificates \
+    git \
+    build-essential \
     && apt-get clean
 
 # Install Eclipse Temurin OpenJDK 8
@@ -23,6 +25,14 @@ COPY . /app
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Create directories for Weka files
+# RUN mkdir -p /app/sklearn/ranking/weka /app/sklearn/ranking/lib
+
+# # Copy Weka files into the container
+# COPY sklearn/ranking/weka /app/sklearn/ranking/weka
+# COPY sklearn/ranking/lib /app/sklearn/ranking/lib
+
 
 # Expose Flask port
 EXPOSE 5000

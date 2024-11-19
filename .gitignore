@@ -1,0 +1,32 @@
+# Ignore Python virtual environment
+venv/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+
+# Ignore environment variable files
+.env
+*.env
+
+# Ignore temporary and cache files
+*.log
+*.bak
+*.swp
+*.tmp
+*.temp
+.DS_Store
+*.~*
+
+# Ignore Python egg info
+*.egg
+*.egg-info
+dist/
+build/
+*.egg-info/
+
+# Ignore compiled Python files
+*.py[cod]
+boostlr_website/__pycache__/
+

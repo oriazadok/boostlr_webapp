@@ -1,6 +1,7 @@
 from celery import Celery
-from boostlr_website.utils import run_boostlr, kendalls_tau, ndcg
-from boostlr_website.src.utils import start_jvm
+
+from boostlr_website.utils import run_boostlr
+from sklearn.ranking.utils import start_jvm, kendalls_tau, ndcg
 
 app = Celery('tasks', broker='redis://redis:6379/0', backend='redis://redis:6379/0')
 

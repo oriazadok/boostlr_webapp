@@ -1,7 +1,8 @@
 from sklearn.model_selection import train_test_split
 from boostlr_website.constants import *
-from boostlr_website.src.utils import *
-from boostlr_website.src.BoostingLRWrapper import BoostingLRWrapper
+
+from sklearn.ranking.utils import *
+from sklearn.ranking.BoostingLRWrapper import BoostingLRWrapper
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
