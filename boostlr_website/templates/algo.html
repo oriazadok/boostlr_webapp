@@ -101,23 +101,23 @@
             const resultBox = document.getElementById('resultBox');
             const resultScore = document.getElementById('resultScore');
             const downloadLink = document.getElementById('downloadLink');
-    
+
             // Check for ongoing task when the page loads
             checkTaskStatus();
-    
+
             // Attach the event listener to the form submit event
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
-    
+
                 // Hide the result box if it is visible
                 resultBox.classList.add('hidden');
-    
+
                 // Show the loading indicator
                 loadingIndicator.classList.remove('hidden');
-    
+
                 // Disable the button to prevent multiple clicks
                 runButton.disabled = true;
-    
+
                 // Submit the form data via AJAX
                 const formData = new FormData(form);
                 fetch("{{ url_for('algo') }}", {
@@ -132,36 +132,39 @@
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    runButton.disabled = false;
+                    runButton.disabled = false; // Re-enable the button
                     loadingIndicator.classList.add('hidden');
                 });
             });
+
+            // Function to check the status of the task
+            function checkTaskStatus(taskId = null) {
+                fetch(`/status/${taskId || 'latest'}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'SUCCESS') {
+                        const loadingIndicator = document.getElementById('loadingIndicator');
+                        const resultBox = document.getElementById('resultBox');
+                        const resultScore = document.getElementById('resultScore');
+                        const downloadLink = document.getElementById('downloadLink');
+
+                        loadingIndicator.classList.add('hidden');
+                        resultBox.classList.remove('hidden');
+                        resultScore.textContent = `Score: ${(data.result.result * 100).toFixed(2)}%`;
+                        downloadLink.href = `/download/${data.result.predictions_filename.split('/').pop()}`;
+                        
+                        runButton.disabled = false; // Re-enable the button
+                    } else if (data.status === 'PENDING') {
+                        setTimeout(() => checkTaskStatus(taskId), 5000);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    runButton.disabled = false; // Re-enable the button
+                });
+            }
         });
-    
-        // Function to check the status of the task
-        function checkTaskStatus(taskId = null) {
-            fetch(`/status/${taskId || 'latest'}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'SUCCESS') {
-                    const loadingIndicator = document.getElementById('loadingIndicator');
-                    const resultBox = document.getElementById('resultBox');
-                    const resultScore = document.getElementById('resultScore');
-                    const downloadLink = document.getElementById('downloadLink');
-    
-                    loadingIndicator.classList.add('hidden');
-                    resultBox.classList.remove('hidden');
-                    resultScore.textContent = `Score: ${(data.result.result * 100).toFixed(2)}%`;
-                    downloadLink.href = `/download/${data.result.predictions_filename.split('/').pop()}`;
-                } else if (data.status === 'PENDING') {
-                    setTimeout(() => checkTaskStatus(taskId), 5000);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    
+
         // Functions to show and hide dataset selection and upload options
         function showDatasetList() {
             document.getElementById('datasetListBox').classList.remove('hidden');
